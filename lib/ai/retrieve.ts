@@ -1,11 +1,12 @@
 // Hybrid retrieval: pgvector semantic + pg_trgm keyword + Reciprocal Rank Fusion + LLM rerank.
 
-import { embed, generateText, Output } from "ai";
+import { generateText, Output } from "ai";
+import { embedQuery } from "./embed";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/lib/db";
 import { clauses } from "@/lib/db/schema";
-import { DEFAULT_MODEL_ID, EMBEDDING_MODEL_ID, getProvider, isAiAvailable } from "./provider";
+import { DEFAULT_MODEL_ID, getProvider, isAiAvailable } from "./provider";
 import type { ArchetypeSlug } from "@/lib/archetypes";
 
 const SEMANTIC_K = 30;
@@ -60,11 +61,7 @@ export async function retrieveClauses(args: {
   let usedFallback = false;
   if (isAiAvailable(byoKey)) {
     try {
-      const provider = getProvider(byoKey);
-      const { embedding } = await embed({
-        model: provider.textEmbeddingModel(EMBEDDING_MODEL_ID),
-        value: scenarioText,
-      });
+      const embedding = await embedQuery(scenarioText, byoKey);
       const vec = `[${embedding.join(",")}]`;
       const semRes = await db.execute<Row>(sql`
         SELECT id, slug, title, body_markdown, clause_type, applies_to_archetypes,
