@@ -7,6 +7,7 @@ import { DEFAULT_MODEL_ID, getProvider, isAiAvailable } from "./provider";
 import type { RetrievedClause } from "./retrieve";
 import type { Classification } from "./classify";
 import { assembleFromTemplate } from "@/lib/fallback/template-assembly";
+import { loadPrompt } from "./prompts";
 
 export const ContractSchema = z.object({
   contract_title: z.string(),
@@ -32,19 +33,8 @@ export const ContractSchema = z.object({
 
 export type GeneratedContract = z.infer<typeof ContractSchema>;
 
-const SYSTEM_PROMPT = `You are drafting a US-jurisdiction music-industry contract using the clause library provided.
-
-ABSOLUTE RULES:
-- DO NOT cite any statute, US Code section, regulation, court case, or legal precedent. Use general industry conventions only.
-- DO NOT promise legal validity. The output is a DRAFT for the user to review with an attorney.
-- DO use plain-English. Define capitalized terms ("Party", "Effective Date") on first use.
-- DO interpolate any {{placeholder}} fields from extracted_fields. If a placeholder has no value, leave it as the {{placeholder}} for the user to fill in — do NOT invent values.
-- DO assemble the contract using the provided clauses where they fit. Add transition language where needed. You MAY rewrite clause language for clarity but the substantive terms must match.
-- For each section, set source_clause_slug to the slug of the clause used (or null for purely connective text).
-- notes_for_user: 1-2 sentences in plain English explaining WHY this section exists and what to watch out for.
-- recommended_next_steps: include "have a music attorney review before signing" as the first item.
-
-Output the contract as STRICT JSON matching the schema. Markdown allowed inside body_markdown.`;
+// System prompt is now externalized to lib/ai/prompts/generate.system.md so the auto-research
+// loop can mutate it. DO NOT inline this string back — it would silently break the prompt applier.
 
 export async function generateContract(args: {
   scenarioText: string;
@@ -83,7 +73,7 @@ export async function generateContract(args: {
     const { output } = await generateText({
       model: provider(DEFAULT_MODEL_ID),
       output: Output.object({ schema: ContractSchema }),
-      system: SYSTEM_PROMPT,
+      system: loadPrompt("generate"),
       prompt: `Primary archetype: ${promptArchetype}\nExtracted fields: ${JSON.stringify(classification.extracted_fields, null, 2)}\n\nScenario:\n${scenarioText}${conversationBlock}\n\nAvailable clauses:\n${clauseBlock}`,
       temperature: 0.2,
     });

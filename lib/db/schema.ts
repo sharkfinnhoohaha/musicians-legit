@@ -147,6 +147,13 @@ export const experiments = pgTable("experiments", {
   afterScore: numeric("after_score"),
   kept: boolean("kept").notNull(),
   scoreBreakdown: jsonb("score_breakdown"),
+  // Auto-research extras (added in db/migrations/001_autoresearch_extras.sql).
+  // proposalJson — full Zod-validated proposer output (target, key, new_value, rationale, predicted_metric_delta).
+  // mutationSha — content hash of the mutated artifact (prompt SHA, config snippet hash, or clause body hash) for attribution.
+  // revertedReason — set when kept=false; one of: "regression", "lawyer-locked", "timeout", "applier-failed", "frozen-asset-violation", "spend-cap".
+  proposalJson: jsonb("proposal_json"),
+  mutationSha: text("mutation_sha"),
+  revertedReason: text("reverted_reason"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

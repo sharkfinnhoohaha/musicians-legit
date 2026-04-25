@@ -12,7 +12,10 @@
     "db:studio": "dotenv -e .env.local -- drizzle-kit studio",
     "db:seed": "dotenv -e .env.local -- tsx scripts/seed-clauses.ts",
     "eval:run": "dotenv -e .env.local -- tsx eval/runner.ts",
-    "experiment": "dotenv -e .env.local -- tsx scripts/run-experiment.ts"
+    "experiment": "dotenv -e .env.local -- tsx scripts/run-experiment.ts",
+    "autoresearch": "dotenv -e .env.local -- tsx scripts/auto-research.ts",
+    "autoresearch:ux": "dotenv -e .env.local -- tsx scripts/auto-research-ux.ts",
+    "autoresearch:calibrate": "dotenv -e .env.local -- tsx scripts/calibrate-noise-floor.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.0",

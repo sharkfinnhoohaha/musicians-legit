@@ -2,6 +2,7 @@
 
 import type { Classification } from "./classify";
 import type { RetrievedClause } from "./retrieve";
+import { CONFIDENCE_WEIGHTS } from "@/lib/autoresearch/config";
 
 export type ConfidenceBreakdown = {
   retrieval_quality: number;
@@ -14,13 +15,8 @@ export type ConfidenceBreakdown = {
   notes: string[];
 };
 
-const WEIGHTS = {
-  retrieval_quality: 0.3,
-  classification_confidence: 0.25,
-  field_completeness: 0.2,
-  clause_review_status: 0.15,
-  jurisdiction_match: 0.1,
-} as const;
+// Weights are now in lib/autoresearch/config.ts so the auto-research applier can mutate them.
+const WEIGHTS = CONFIDENCE_WEIGHTS;
 
 export function computeConfidence(args: {
   classification: Classification;

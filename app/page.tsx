@@ -104,66 +104,66 @@ export default function HomePage() {
   return (
     <main
       className={cn(
-        "relative min-h-screen w-full px-6 py-10 transition-all duration-500",
+        "relative min-h-screen w-full px-6 py-12 transition-all duration-500",
         result ? "lg:pr-[700px]" : "",
       )}
     >
       {/* Header */}
-      <div className="mx-auto flex max-w-3xl items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-2)] text-[var(--color-bg)]">
-            <Sparkles className="size-4" />
+      <div className="mx-auto flex max-w-3xl items-center justify-between border-b border-[var(--color-border)] pb-6">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <div className="grid size-7 place-items-center rounded bg-[var(--color-accent)] text-white">
+              <Sparkles className="size-3.5" strokeWidth={2.5} />
+            </div>
+            <span className="text-sm font-semibold text-[var(--color-fg)] tracking-tight">Musicians Legit</span>
           </div>
-          <span className="text-sm font-medium tracking-tight">Musicians Legit</span>
-          <span className="rounded-full border border-[var(--color-border)] px-2 py-0.5 text-[10px] uppercase tracking-wide text-[var(--color-muted)]">
-            Beta · US only
-          </span>
+          <span className="text-[11px] text-[var(--color-muted)] font-medium uppercase tracking-wide">Beta</span>
         </div>
-        <div className="flex items-center gap-2">
-          <label className="flex items-center gap-2 text-xs text-[var(--color-muted)]">
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-xs text-[var(--color-muted)] cursor-pointer hover:text-[var(--color-fg)] transition">
             <input
               type="checkbox"
               checked={forceFallback}
               onChange={(e) => setForceFallback(e.target.checked)}
-              className="size-3.5 accent-[var(--color-accent)]"
+              className="size-3.5 accent-[var(--color-accent)] cursor-pointer"
             />
-            Template mode (no AI)
+            <span>Template mode</span>
           </label>
           <button
             onClick={() => setShowSettings((v) => !v)}
-            className="rounded-md p-1.5 text-[var(--color-muted)] hover:text-[var(--color-fg)]"
+            className="rounded p-1.5 text-[var(--color-muted)] hover:text-[var(--color-fg)] hover:bg-[var(--color-bg-elev)] transition"
             aria-label="Settings"
           >
-            <Settings className="size-4" />
+            <Settings className="size-4" strokeWidth={1.5} />
           </button>
         </div>
       </div>
 
       {showSettings && (
-        <div className="mx-auto mt-4 max-w-3xl rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elev)] p-4">
-          <label className="block text-xs uppercase tracking-wide text-[var(--color-muted)]">
-            <KeyRound className="mr-1 inline size-3.5" />
-            Bring your own Google AI Studio key (free at aistudio.google.com/apikey)
+        <div className="mx-auto mt-4 max-w-3xl rounded-lg border border-[var(--color-border)] bg-white p-4">
+          <label className="block text-xs uppercase tracking-wide text-[var(--color-muted)] font-medium mb-3">
+            <KeyRound className="mr-2 inline size-3.5" />
+            Bring Your Own Google API Key
           </label>
-          <div className="mt-2 flex gap-2">
+          <div className="mt-3 flex gap-2">
             <input
               type="password"
               value={byoKey}
               onChange={(e) => rememberKey(e.target.value)}
               placeholder="AIza..."
-              className="flex-1 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm focus:border-[var(--color-accent)] focus:outline-none"
+              className="flex-1 rounded border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none focus:ring-1 focus:ring-[var(--color-accent)]"
             />
             {byoKey && (
               <button
                 onClick={() => rememberKey("")}
-                className="rounded-md border border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-muted)]"
+                className="rounded border border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-fg)] hover:bg-[var(--color-bg-elev)] transition"
               >
                 Clear
               </button>
             )}
           </div>
           <p className="mt-2 text-[11px] text-[var(--color-muted)]">
-            Stored only in your browser. Sent on each request as a header. We never log your key.
+            Get a free API key at <span className="text-[var(--color-accent)] font-medium">aistudio.google.com/apikey</span>. Your key is stored only in your browser and never logged by us.
           </p>
         </div>
       )}
@@ -172,36 +172,39 @@ export default function HomePage() {
       <section
         className={cn(
           "mx-auto max-w-3xl",
-          isFresh ? "mt-32" : "mt-10",
+          isFresh ? "mt-24" : "mt-12",
         )}
       >
         {isFresh && (
-          <div className="mb-8 text-center">
-            <h1 className="text-4xl font-semibold tracking-tight text-[var(--color-fg)] sm:text-5xl">
-              Music contracts,{" "}
-              <span className="bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-2)] bg-clip-text text-transparent">
-                drafted from a sentence.
+          <div className="mb-12 text-center">
+            <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-[var(--color-fg)] mb-4">
+              Music Contracts,{" "}
+              <span className="text-[var(--color-accent)]">
+                Instantly Drafted.
               </span>
             </h1>
-            <p className="mx-auto mt-3 max-w-xl text-balance text-sm text-[var(--color-muted)]">
-              Describe your situation. We'll classify it, ask any missing details, and draft a contract grounded in
-              real US music-industry conventions. Read the whole thing before signing — this is a draft, not legal
-              advice.
+            <p className="mx-auto max-w-2xl text-balance text-base text-[var(--color-muted)] leading-relaxed mb-6">
+              Describe your music situation in plain English. Musicians Legit classifies your agreement, asks clarifying questions, and generates a legally-grounded contract in minutes.
             </p>
+            <div className="mx-auto max-w-2xl rounded-lg border border-[var(--color-border)] bg-oklch(0.99_0.003_270) p-4 text-sm text-[var(--color-muted)]">
+              <p className="leading-relaxed">
+                <strong className="text-[var(--color-fg)]">Not legal advice.</strong> These are templates grounded in US music industry conventions. Covers split sheets, producer agreements, sync licenses, gig contracts, and more. Always have a lawyer review before signing.
+              </p>
+            </div>
           </div>
         )}
 
         {/* Chat thread */}
         {conversation.length > 0 && (
-          <div className="mb-4 space-y-3">
+          <div className="mb-6 space-y-3">
             {conversation.map((m, i) => (
               <div
                 key={i}
                 className={cn(
-                  "max-w-[80%] rounded-2xl px-4 py-2 text-sm",
+                  "max-w-[80%] rounded-lg px-4 py-3 text-sm leading-relaxed",
                   m.role === "user"
-                    ? "ml-auto bg-[var(--color-bg-elev)] border border-[var(--color-border)]"
-                    : "mr-auto border border-[var(--color-border)] bg-[oklch(0.20_0.02_290/0.6)]",
+                    ? "ml-auto bg-[var(--color-accent)] text-white border border-[var(--color-accent)]"
+                    : "mr-auto bg-[var(--color-bg-elev)] border border-[var(--color-border)] text-[var(--color-fg)]",
                 )}
               >
                 {m.content}
@@ -212,7 +215,7 @@ export default function HomePage() {
 
         <form onSubmit={onSubmit}>
           <div className="glow-ring">
-            <div className="flex items-end gap-2 rounded-[calc(1.25rem-1px)] bg-[var(--color-bg-elev)] p-3">
+            <div className="flex items-end gap-3 rounded-lg bg-white p-4">
               <textarea
                 ref={taRef}
                 value={input}
@@ -229,20 +232,20 @@ export default function HomePage() {
                     ? "Answer the question, or add more detail…"
                     : "Describe your situation in plain English…"
                 }
-                className="flex-1 resize-none bg-transparent px-3 py-2 text-base outline-none placeholder:text-[var(--color-muted)]"
+                className="flex-1 resize-none bg-transparent text-base text-[var(--color-fg)] outline-none placeholder:text-[var(--color-muted)]"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
                 className={cn(
-                  "grid size-10 shrink-0 place-items-center rounded-xl transition",
+                  "grid size-10 shrink-0 place-items-center rounded transition-all",
                   input.trim() && !loading
-                    ? "bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-2)] text-[var(--color-bg)] hover:scale-[1.04]"
-                    : "bg-[var(--color-bg)] text-[var(--color-muted)]",
+                    ? "bg-[var(--color-accent)] text-white hover:bg-oklch(0.32_0.12_260) active:scale-95"
+                    : "bg-[var(--color-border)] text-[var(--color-muted)]",
                 )}
                 aria-label="Send"
               >
-                <Send className="size-4" />
+                <Send className="size-4" strokeWidth={2} />
               </button>
             </div>
           </div>
@@ -250,12 +253,12 @@ export default function HomePage() {
 
         {/* Example chips */}
         {isFresh && (
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-8 flex flex-wrap gap-2">
             {EXAMPLES.map((ex) => (
               <button
                 key={ex}
                 onClick={() => setInput(ex)}
-                className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs text-[var(--color-muted)] transition hover:border-[var(--color-accent)] hover:text-[var(--color-fg)]"
+                className="rounded-full border border-[var(--color-border)] px-4 py-2 text-xs text-[var(--color-muted)] transition hover:border-[var(--color-accent)] hover:bg-[var(--color-bg-elev)] hover:text-[var(--color-fg)]"
               >
                 {ex}
               </button>
@@ -264,13 +267,18 @@ export default function HomePage() {
         )}
 
         {loading && (
-          <div className="mt-6 flex items-center gap-2 text-sm text-[var(--color-muted)]">
-            <span className="size-2 animate-pulse rounded-full bg-[var(--color-accent)]" />
-            Drafting…
+          <div className="mt-8 flex items-center gap-3 text-sm text-[var(--color-muted)]">
+            <div className="flex gap-1">
+              <span className="size-2 rounded-full bg-[var(--color-accent)] loading-pulse" />
+              <span className="size-2 rounded-full bg-[var(--color-accent)] loading-pulse" />
+              <span className="size-2 rounded-full bg-[var(--color-accent)] loading-pulse" />
+            </div>
+            Drafting contract…
           </div>
         )}
         {error && (
-          <div className="mt-6 rounded-lg border border-[oklch(0.40_0.20_25/0.5)] bg-[oklch(0.20_0.10_25/0.3)] px-4 py-3 text-sm text-[var(--color-danger)]">
+          <div className="mt-6 rounded-lg border border-[var(--color-danger)] bg-[oklch(0.96_0.05_25)] px-4 py-3 text-sm text-[var(--color-danger)]">
+            <strong className="block mb-1">Error</strong>
             {error}
           </div>
         )}
@@ -278,8 +286,15 @@ export default function HomePage() {
 
       {/* Footer */}
       {isFresh && (
-        <footer className="mx-auto mt-24 max-w-3xl text-center text-[11px] leading-relaxed text-[var(--color-muted)]">
-          Not legal advice. Drafts only. US jurisdiction. Powered by Google Gemini (free tier) or your own key.
+        <footer className="mx-auto mt-16 max-w-3xl text-center text-[12px] leading-relaxed text-[var(--color-muted)]">
+          <div className="border-t border-[var(--color-border)] pt-8">
+            <p className="mb-2">
+              <strong className="text-[var(--color-fg)]">Disclaimer:</strong> Musicians Legit generates contract templates based on US music industry conventions. These are drafts, not legal advice. Always have a licensed attorney review before signing any agreement.
+            </p>
+            <p className="text-[11px] text-[var(--color-muted)]">
+              Powered by Google Gemini API (free tier) or your own API key. US jurisdiction only.
+            </p>
+          </div>
         </footer>
       )}
 
