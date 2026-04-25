@@ -7,6 +7,7 @@ import { ARCHETYPE_SLUGS, type ArchetypeSlug } from "@/lib/archetypes";
 import { DEFAULT_MODEL_ID, getProvider, isAiAvailable } from "./provider";
 import { keywordClassify } from "@/lib/fallback/classifier";
 import { extractFields } from "@/lib/fallback/extractor";
+import { loadPrompt } from "./prompts";
 
 const ClassificationSchema = z.object({
   archetypes: z
@@ -34,15 +35,8 @@ const ClassificationSchema = z.object({
 
 export type Classification = z.infer<typeof ClassificationSchema>;
 
-const SYSTEM_PROMPT = `You are a music-industry contract intake assistant.
-Given a free-text scenario from an indie musician, classify which contract archetype(s) apply, extract any factual entities mentioned, and flag any CRITICAL missing fields the user must clarify before a contract can be drafted.
-
-Rules:
-- NEVER cite specific statutes, court cases, or regulations.
-- If the scenario is ambiguous, list the missing fields needed to disambiguate — do not guess.
-- "Critical" missing fields are ones whose absence would force the contract to use placeholder values (e.g., royalty %, party identity, term length, exclusivity).
-- Set confidence < 0.6 for any archetype whose match is weak.
-- scenario_summary: ONE sentence neutral restatement.`;
+// System prompt is now externalized to lib/ai/prompts/classify.system.md so the auto-research
+// loop can mutate it. DO NOT inline this string back — it would silently break the prompt applier.
 
 export async function classifyScenario(
   scenarioText: string,
@@ -57,7 +51,7 @@ export async function classifyScenario(
     const { output } = await generateText({
       model: provider(DEFAULT_MODEL_ID),
       output: Output.object({ schema: ClassificationSchema }),
-      system: SYSTEM_PROMPT,
+      system: loadPrompt("classify"),
       prompt: `Scenario:\n${scenarioText}`,
       temperature: 0.1,
     });

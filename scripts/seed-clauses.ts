@@ -1,17 +1,19 @@
 // Loads lib/clauses/seed/*.md → clauses table, generates embeddings via Gemini.
 // Also seeds pain_points and contract_templates from in-code constants.
+//
+// NOTE: we call Gemini's embedContent REST endpoint directly. The AI SDK v6
+// `embed()` helper has a v2-compat-mode bug with @ai-sdk/google where
+// `warnings:undefined` crashes the warning logger before any value is returned.
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { embed } from "ai";
-import { google } from "@ai-sdk/google";
 import { sql } from "drizzle-orm";
 import { getDb } from "../lib/db";
 import { clauses, contractTemplates, painPoints } from "../lib/db/schema";
 import { ARCHETYPES } from "../lib/archetypes";
 import { CONTRACT_TEMPLATES } from "../lib/contract-templates";
-import { EMBEDDING_MODEL_ID } from "../lib/ai/provider";
+import { embedDocument } from "../lib/ai/embed";
 
 const SEED_DIR = path.join(process.cwd(), "lib/clauses/seed");
 
@@ -38,13 +40,7 @@ async function readSeedClauses() {
   return out;
 }
 
-async function embedText(text: string): Promise<number[]> {
-  const { embedding } = await embed({
-    model: google.textEmbeddingModel(EMBEDDING_MODEL_ID),
-    value: text,
-  });
-  return embedding;
-}
+const embedText = (text: string) => embedDocument(text);
 
 async function main() {
   if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {

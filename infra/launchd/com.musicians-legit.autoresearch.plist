@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.musicians-legit.autoresearch</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/finnbennett/Library/Mobile Documents/com~apple~CloudDocs/Web Dev/Musicians-Legit/infra/launchd/run-autoresearch.sh</string>
+  </array>
+
+  <!-- Every 2 hours. Mac sleep is fine — launchd skips fires while asleep
+       and runs at next wake. -->
+  <key>StartInterval</key>
+  <integer>7200</integer>
+
+  <key>StandardOutPath</key>
+  <string>/Users/finnbennett/Library/Logs/musicians-legit-autoresearch.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/finnbennett/Library/Logs/musicians-legit-autoresearch.err</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <!-- Don't start a new run while one is still going. -->
+  <key>AbandonProcessGroup</key>
+  <false/>
+</dict>
+</plist>

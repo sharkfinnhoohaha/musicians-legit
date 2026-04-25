@@ -1,55 +1,416 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────
+   Musicians Legit — Editorial Industrial theme
+   Paper & ink with brass. Restraint, hairline structure,
+   technical labels. Inspired by Simpac (formality) and
+   Albumatlas (editorial typography).
+   ───────────────────────────────────────────────────────────── */
+
 @theme {
-  --color-bg: oklch(0.16 0.01 270);
-  --color-bg-elev: oklch(0.20 0.015 270);
-  --color-fg: oklch(0.96 0.005 270);
-  --color-muted: oklch(0.65 0.01 270);
-  --color-accent: oklch(0.78 0.18 290);
-  --color-accent-2: oklch(0.82 0.15 200);
-  --color-border: oklch(0.28 0.01 270);
-  --color-success: oklch(0.78 0.16 145);
-  --color-warning: oklch(0.82 0.16 75);
-  --color-danger: oklch(0.72 0.21 25);
+  /* Surfaces */
+  --color-paper: oklch(0.97 0.005 85);          /* warm cream */
+  --color-card: oklch(1.00 0 0);                 /* pure white */
+  --color-ink: oklch(0.16 0.015 260);            /* deep navy-black */
+  --color-ink-soft: oklch(0.30 0.012 260);
+  --color-muted: oklch(0.46 0.012 260);
+  --color-muted-2: oklch(0.62 0.008 260);
+  --color-hairline: oklch(0.88 0.005 85);
+  --color-hairline-soft: oklch(0.93 0.005 85);
+
+  /* Accents — used sparingly */
+  --color-brass: oklch(0.55 0.13 60);            /* warm burnt brass */
+  --color-brass-deep: oklch(0.42 0.13 55);
+  --color-marine: oklch(0.30 0.09 245);          /* deep maritime ink */
+
+  /* Status */
+  --color-success: oklch(0.45 0.12 145);
+  --color-warning: oklch(0.60 0.14 75);
+  --color-danger: oklch(0.50 0.18 25);
+
+  /* Legacy tokens kept for older components */
+  --color-bg: var(--color-paper);
+  --color-bg-elev: var(--color-card);
+  --color-fg: var(--color-ink);
+  --color-accent: var(--color-marine);
+  --color-accent-2: var(--color-brass);
+  --color-border: var(--color-hairline);
 }
 
 @layer base {
   html, body {
-    background: var(--color-bg);
-    color: var(--color-fg);
-    font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "Inter", sans-serif;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-dm-sans), -apple-system, system-ui, sans-serif;
+    font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
+
   body {
-    background:
-      radial-gradient(1000px 600px at 20% -10%, oklch(0.30 0.12 290 / 0.18), transparent 60%),
-      radial-gradient(900px 500px at 110% 20%, oklch(0.30 0.10 200 / 0.14), transparent 60%),
-      var(--color-bg);
     min-height: 100vh;
+    background-image:
+      /* very subtle paper grain */
+      radial-gradient(circle at 18% 22%, oklch(0.94 0.012 60 / 0.45) 0, transparent 38%),
+      radial-gradient(circle at 82% 78%, oklch(0.93 0.010 260 / 0.40) 0, transparent 42%);
+    background-attachment: fixed;
   }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-fraunces), "Times New Roman", serif;
+    font-weight: 500;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+    letter-spacing: -0.022em;
+    color: var(--color-ink);
+  }
+
+  /* Editorial hairline rule */
+  hr {
+    border: 0;
+    border-top: 1px solid var(--color-hairline);
+  }
+
   ::selection {
-    background: oklch(0.50 0.18 290 / 0.45);
+    background: oklch(0.55 0.13 60 / 0.18);
+    color: var(--color-ink);
   }
 }
 
-.glow-ring {
-  background: linear-gradient(140deg,
-    oklch(0.55 0.20 290 / 0.55),
-    oklch(0.55 0.18 200 / 0.45) 60%,
-    oklch(0.55 0.18 290 / 0.55));
-  padding: 1px;
-  border-radius: 1.25rem;
-  filter: drop-shadow(0 0 24px oklch(0.55 0.20 290 / 0.30));
+/* ─────────────────────────────────────────────────────────────
+   Utility components
+   ───────────────────────────────────────────────────────────── */
+
+.mono {
+  font-family: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
+  font-feature-settings: "ss01", "cv11";
 }
 
+.eyebrow {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.section-tag {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-tag::before {
+  content: "";
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--color-hairline);
+}
+
+/* Editorial display headline */
+.display {
+  font-family: var(--font-fraunces), serif;
+  font-weight: 400;
+  font-variation-settings: "opsz" 144, "SOFT" 20;
+  letter-spacing: -0.028em;
+  line-height: 0.96;
+}
+
+.display em {
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 80;
+  color: var(--color-brass-deep);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Buttons
+   ───────────────────────────────────────────────────────────── */
+
+.btn-ink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: 0.85rem 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  border: 1px solid var(--color-ink);
+  border-radius: 0;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.btn-ink:hover {
+  background: var(--color-marine);
+  border-color: var(--color-marine);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--color-ink);
+  padding: 0.85rem 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--color-ink);
+  border-radius: 0;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.btn-outline:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Input shells
+   ───────────────────────────────────────────────────────────── */
+
+.input-shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-ink);
+  background: var(--color-card);
+  transition: box-shadow 220ms ease;
+}
+
+.input-shell:focus-within {
+  box-shadow: 4px 4px 0 var(--color-ink);
+  transform: translate(-1px, -1px);
+}
+
+.input-shell input {
+  flex: 1;
+  background: transparent;
+  outline: none;
+  padding: 1.05rem 1.2rem;
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  font-family: inherit;
+}
+
+.input-shell input::placeholder {
+  color: var(--color-muted-2);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Loading animation: "Score → Contract"
+   Staff lines draw left-to-right, then morph into structured
+   paragraph blocks. Used in the tool while drafting.
+   ───────────────────────────────────────────────────────────── */
+
+@keyframes ml-staff-draw {
+  0%   { stroke-dashoffset: 240; opacity: 0; }
+  10%  { opacity: 1; }
+  60%  { stroke-dashoffset: 0; opacity: 1; }
+  78%  { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0.18; }
+}
+
+@keyframes ml-block-fade {
+  0%, 60%   { opacity: 0; transform: scaleX(0); transform-origin: left center; }
+  72%       { opacity: 1; transform: scaleX(1); }
+  100%      { opacity: 1; transform: scaleX(1); }
+}
+
+@keyframes ml-cursor-blink {
+  0%, 100% { opacity: 0.05; }
+  50%      { opacity: 1; }
+}
+
+.ml-loader-svg .staff {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.1;
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: ml-staff-draw 3.6s ease-in-out infinite;
+}
+
+.ml-loader-svg .staff:nth-child(2) { animation-delay: 0.05s; }
+.ml-loader-svg .staff:nth-child(3) { animation-delay: 0.10s; }
+.ml-loader-svg .staff:nth-child(4) { animation-delay: 0.15s; }
+.ml-loader-svg .staff:nth-child(5) { animation-delay: 0.20s; }
+
+.ml-loader-svg .block {
+  fill: var(--color-ink);
+  transform-origin: left center;
+  animation: ml-block-fade 3.6s ease-out infinite;
+}
+
+.ml-loader-svg .block:nth-of-type(2) { animation-delay: 0.10s; }
+.ml-loader-svg .block:nth-of-type(3) { animation-delay: 0.20s; }
+.ml-loader-svg .block:nth-of-type(4) { animation-delay: 0.30s; }
+.ml-loader-svg .block:nth-of-type(5) { animation-delay: 0.40s; }
+
+.ml-loader-svg .cursor {
+  fill: var(--color-brass);
+  animation: ml-cursor-blink 1.2s ease-in-out infinite;
+}
+
+/* Original chat dots (kept for legacy) */
+@keyframes loading-pulse-kf {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50%      { opacity: 1; transform: translateY(-1px); }
+}
+
+.loading-pulse {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  animation: loading-pulse-kf 1.4s ease-in-out infinite;
+}
+
+.loading-pulse:nth-child(2) { animation-delay: 0.2s; }
+.loading-pulse:nth-child(3) { animation-delay: 0.4s; }
+
+/* ─────────────────────────────────────────────────────────────
+   Page-load reveal
+   ───────────────────────────────────────────────────────────── */
+
+@keyframes ml-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.rise {
+  opacity: 0;
+  animation: ml-rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.rise-1 { animation-delay: 0.05s; }
+.rise-2 { animation-delay: 0.18s; }
+.rise-3 { animation-delay: 0.32s; }
+.rise-4 { animation-delay: 0.48s; }
+.rise-5 { animation-delay: 0.66s; }
+
+/* Editorial drop-cap */
+.dropcap::first-letter {
+  font-family: var(--font-fraunces), serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 3.2em;
+  line-height: 0.85;
+  float: left;
+  padding: 0.1em 0.12em 0 0;
+  color: var(--color-brass-deep);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Hairline grid overlay (atmosphere)
+   ───────────────────────────────────────────────────────────── */
+
+.hairline-grid {
+  background-image:
+    linear-gradient(to right, var(--color-hairline-soft) 1px, transparent 1px);
+  background-size: calc(100% / 12) 100%;
+  background-position: 0 0;
+}
+
+/* Glow ring (legacy) */
+.glow-ring {
+  border: 1px solid var(--color-hairline);
+  background: var(--color-card);
+  border-radius: 0;
+}
+
+/* Scroll fade (legacy) */
 .scroll-fade {
   mask-image: linear-gradient(to bottom, black 92%, transparent);
 }
 
-.prose-contract h1 { font-size: 1.75rem; font-weight: 700; margin-top: 0; margin-bottom: 0.75rem; }
-.prose-contract h2 { font-size: 1.05rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--color-fg); }
-.prose-contract h3 { font-size: 0.95rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.4rem; color: var(--color-muted); }
-.prose-contract p, .prose-contract li { color: oklch(0.90 0.005 270); line-height: 1.55; font-size: 0.95rem; }
-.prose-contract ul { margin: 0.5rem 0 0.5rem 1.25rem; list-style: disc; }
-.prose-contract code { background: var(--color-bg-elev); padding: 0.05rem 0.3rem; border-radius: 0.25rem; font-size: 0.85em; }
-.prose-contract em { color: var(--color-muted); }
+/* ─────────────────────────────────────────────────────────────
+   Contract prose styling (used in /demo drawer)
+   ───────────────────────────────────────────────────────────── */
+
+.prose-contract h1 {
+  font-size: 1.75rem;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: var(--color-ink);
+}
+
+.prose-contract h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-ink);
+  font-family: var(--font-dm-sans), sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.prose-contract h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.4rem;
+  color: var(--color-muted);
+  font-family: var(--font-jetbrains), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.prose-contract p, .prose-contract li {
+  color: var(--color-ink-soft);
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+
+.prose-contract ul {
+  margin: 0.5rem 0 0.5rem 1.25rem;
+  list-style: square;
+}
+
+.prose-contract code {
+  background: var(--color-paper);
+  padding: 0.05rem 0.3rem;
+  border: 1px solid var(--color-hairline);
+  font-size: 0.85em;
+  color: var(--color-ink);
+  font-family: var(--font-jetbrains), monospace;
+}
+
+.prose-contract em {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Marquee — for the trust strip
+   ───────────────────────────────────────────────────────────── */
+
+@keyframes ml-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee {
+  display: flex;
+  gap: 4rem;
+  width: max-content;
+  animation: ml-marquee 38s linear infinite;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

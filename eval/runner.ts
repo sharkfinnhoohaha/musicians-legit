@@ -3,6 +3,15 @@
    This file is the yardstick the auto-research loop measures against.
    Changing it invalidates all historical experiment scores.
    See docs/AUTORESEARCH.md for the rationale (Karpathy autoresearch §prepare.py).
+
+   ── REBASELINE BOUNDARY ──────────────────────────────────────────────────
+   Patched once on the autoresearch-loop introduction commit:
+     • per-scenario raw judge `scores` are now exposed in results[]
+     • run-level summary now includes per-dimension means,
+       `adversarial_neutrality_mean`, and `vague_followup_compliance`
+   The composite scoring math (WEIGHTS, formula) is UNCHANGED. Numerical
+   composite scores from before this commit are still comparable.
+   This file is re-frozen as of this patch. Do not edit again.
    ════════════════════════════════════════════════════════════════════════ */
 
 import { promises as fs } from "node:fs";
@@ -120,6 +129,12 @@ async function runOne(s: Scenario, judgePrompt: string) {
     retrievedSlugs: [...got],
     expectedSlugs: [...expected],
     judgeNotes: judgeResult.notes,
+    // Rebaseline patch: full per-dimension judge scores so the regression gate
+    // can compute adversarial_neutrality_mean and similar derived aggregates
+    // outside the runner. Generated markdown is preserved so the regression
+    // gate can run rubric.must_not_include checks without re-querying the model.
+    judgeScores: judgeResult.scores,
+    generatedMarkdown: markdown,
   };
 }
 
@@ -144,6 +159,19 @@ export async function runEval(opts: { limit?: number } = {}) {
   }
 
   const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length);
+
+  // Rebaseline patch: derived aggregates the regression gate needs.
+  // Adversarial scenario IDs are pinned per eval/judge-prompt.md §"Aggregation across the 30 scenarios".
+  const ADVERSARIAL_IDS = new Set(["scn-015", "scn-027", "scn-030"]);
+  const VAGUE_IDS = new Set(["scn-003", "scn-008", "scn-012", "scn-018", "scn-026"]);
+
+  const adversarialNeutralities = results
+    .filter((r) => ADVERSARIAL_IDS.has(r.id))
+    .map((r) => r.judgeScores.neutrality);
+  const vagueFollowupPasses = results
+    .filter((r) => VAGUE_IDS.has(r.id))
+    .map((r) => (r.judgeScores.follows_rubric >= 0.7 ? 1 : 0));
+
   const summary = {
     n: results.length,
     composite_mean: mean(results.map((r) => r.composite)),
@@ -151,6 +179,19 @@ export async function runEval(opts: { limit?: number } = {}) {
     judge_rubric_mean: mean(results.map((r) => r.judge_rubric_pass_rate)),
     factual_consistency_mean: mean(results.map((r) => r.factual_consistency)),
     latency_p50_ms: median(results.map((r) => r.latencyMs)),
+    // Per-dimension means — derived, not part of the composite formula.
+    judge_dimension_means: {
+      clarity: mean(results.map((r) => r.judgeScores.clarity)),
+      completeness: mean(results.map((r) => r.judgeScores.completeness)),
+      factual_consistency: mean(results.map((r) => r.judgeScores.factual_consistency)),
+      follows_rubric: mean(results.map((r) => r.judgeScores.follows_rubric)),
+      includes_disclaimer: mean(results.map((r) => r.judgeScores.includes_disclaimer)),
+      neutrality: mean(results.map((r) => r.judgeScores.neutrality)),
+    },
+    adversarial_neutrality_mean:
+      adversarialNeutralities.length > 0 ? mean(adversarialNeutralities) : 1,
+    vague_followup_compliance:
+      vagueFollowupPasses.length > 0 ? mean(vagueFollowupPasses) : 1,
     weights: WEIGHTS,
     results,
   };

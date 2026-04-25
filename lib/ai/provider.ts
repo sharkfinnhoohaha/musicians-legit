@@ -5,7 +5,8 @@ import { google, createGoogleGenerativeAI } from "@ai-sdk/google";
 
 export const DEFAULT_MODEL_ID = "gemini-2.5-flash";
 export const JUDGE_MODEL_ID = "gemini-2.5-pro"; // stronger, frozen for eval
-export const EMBEDDING_MODEL_ID = "text-embedding-004";
+export const EMBEDDING_MODEL_ID = "gemini-embedding-001";
+export const EMBEDDING_DIMENSIONS = 768; // schema is vector(768); model defaults to 3072 so we truncate
 
 /** Pick the right provider based on whether the user supplied their own key. */
 export function getProvider(byoKey?: string | null) {

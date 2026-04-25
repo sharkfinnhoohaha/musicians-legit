@@ -1,17 +1,17 @@
 // Hybrid retrieval: pgvector semantic + pg_trgm keyword + Reciprocal Rank Fusion + LLM rerank.
 
-import { embed, generateText, Output } from "ai";
+import { generateText, Output } from "ai";
+import { embedQuery } from "./embed";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/lib/db";
-import { clauses } from "@/lib/db/schema";
-import { DEFAULT_MODEL_ID, EMBEDDING_MODEL_ID, getProvider, isAiAvailable } from "./provider";
+import { DEFAULT_MODEL_ID, getProvider, isAiAvailable } from "./provider";
 import type { ArchetypeSlug } from "@/lib/archetypes";
+import { loadPrompt } from "./prompts";
+import { RETRIEVAL_CONFIG } from "@/lib/autoresearch/config";
 
-const SEMANTIC_K = 30;
-const KEYWORD_K = 30;
-const RRF_K = 60; // reciprocal-rank-fusion smoothing constant
-const FINAL_TOP_N = 12;
+// Tunable scalars are now in lib/autoresearch/config.ts so the auto-research applier can mutate them.
+const { SEMANTIC_K, KEYWORD_K, RRF_K, FINAL_TOP_N, ARCHETYPE_BIAS } = RETRIEVAL_CONFIG;
 
 export type RetrievedClause = {
   id: string;
@@ -60,11 +60,7 @@ export async function retrieveClauses(args: {
   let usedFallback = false;
   if (isAiAvailable(byoKey)) {
     try {
-      const provider = getProvider(byoKey);
-      const { embedding } = await embed({
-        model: provider.textEmbeddingModel(EMBEDDING_MODEL_ID),
-        value: scenarioText,
-      });
+      const embedding = await embedQuery(scenarioText, byoKey);
       const vec = `[${embedding.join(",")}]`;
       const semRes = await db.execute<Row>(sql`
         SELECT id, slug, title, body_markdown, clause_type, applies_to_archetypes,
@@ -103,7 +99,7 @@ export async function retrieveClauses(args: {
     const overlap = (entry.row.applies_to_archetypes ?? []).some((a) =>
       archetypes.includes(a as ArchetypeSlug),
     );
-    if (overlap) entry.score *= 1.5;
+    if (overlap) entry.score *= ARCHETYPE_BIAS;
   }
 
   let candidates = [...rrf.values()]
@@ -152,7 +148,7 @@ async function llmRerank(
   const { output } = await generateText({
     model: provider(DEFAULT_MODEL_ID),
     output: Output.object({ schema: RerankSchema }),
-    system: "Score how relevant each clause is to the user's scenario from 0 (irrelevant) to 1 (essential). Output the ranked list, most relevant first.",
+    system: loadPrompt("rerank"),
     prompt: `Scenario: ${scenarioText}\n\nClauses:\n${list}`,
     temperature: 0.0,
   });

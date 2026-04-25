@@ -147,6 +147,41 @@ export const experiments = pgTable("experiments", {
   afterScore: numeric("after_score"),
   kept: boolean("kept").notNull(),
   scoreBreakdown: jsonb("score_breakdown"),
+  // Auto-research extras (added in db/migrations/001_autoresearch_extras.sql).
+  // proposalJson — full Zod-validated proposer output (target, key, new_value, rationale, predicted_metric_delta).
+  // mutationSha — content hash of the mutated artifact (prompt SHA, config snippet hash, or clause body hash) for attribution.
+  // revertedReason — set when kept=false; one of: "regression", "lawyer-locked", "timeout", "applier-failed", "frozen-asset-violation", "spend-cap".
+  proposalJson: jsonb("proposal_json"),
+  mutationSha: text("mutation_sha"),
+  revertedReason: text("reverted_reason"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Waitlist + contact submissions — for landing-page validation.
+   ───────────────────────────────────────────────────────────────────────── */
+
+export const waitlistSubscribers = pgTable(
+  "waitlist_subscribers",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    email: text("email").notNull().unique(),
+    context: text("context"), // e.g. landing-hero | landing-cta | pricing-waitlist
+    referrer: text("referrer"),
+    userAgent: text("user_agent"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (t) => ({
+    emailIdx: index("waitlist_email_idx").on(t.email),
+  }),
+);
+
+export const contactSubmissions = pgTable("contact_submissions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: text("name"),
+  email: text("email").notNull(),
+  topic: text("topic"),
+  message: text("message").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
