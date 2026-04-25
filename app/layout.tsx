@@ -7,7 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
-  axes: ["opsz", "SOFT"],
+  axes: ["SOFT"],
   display: "swap",
 });
 
