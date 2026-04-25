@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: oklch(0.16 0.01 270);
+  --color-bg-elev: oklch(0.20 0.015 270);
+  --color-fg: oklch(0.96 0.005 270);
+  --color-muted: oklch(0.65 0.01 270);
+  --color-accent: oklch(0.78 0.18 290);
+  --color-accent-2: oklch(0.82 0.15 200);
+  --color-border: oklch(0.28 0.01 270);
+  --color-success: oklch(0.78 0.16 145);
+  --color-warning: oklch(0.82 0.16 75);
+  --color-danger: oklch(0.72 0.21 25);
+}
+
+@layer base {
+  html, body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background:
+      radial-gradient(1000px 600px at 20% -10%, oklch(0.30 0.12 290 / 0.18), transparent 60%),
+      radial-gradient(900px 500px at 110% 20%, oklch(0.30 0.10 200 / 0.14), transparent 60%),
+      var(--color-bg);
+    min-height: 100vh;
+  }
+  ::selection {
+    background: oklch(0.50 0.18 290 / 0.45);
+  }
+}
+
+.glow-ring {
+  background: linear-gradient(140deg,
+    oklch(0.55 0.20 290 / 0.55),
+    oklch(0.55 0.18 200 / 0.45) 60%,
+    oklch(0.55 0.18 290 / 0.55));
+  padding: 1px;
+  border-radius: 1.25rem;
+  filter: drop-shadow(0 0 24px oklch(0.55 0.20 290 / 0.30));
+}
+
+.scroll-fade {
+  mask-image: linear-gradient(to bottom, black 92%, transparent);
+}
+
+.prose-contract h1 { font-size: 1.75rem; font-weight: 700; margin-top: 0; margin-bottom: 0.75rem; }
+.prose-contract h2 { font-size: 1.05rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--color-fg); }
+.prose-contract h3 { font-size: 0.95rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.4rem; color: var(--color-muted); }
+.prose-contract p, .prose-contract li { color: oklch(0.90 0.005 270); line-height: 1.55; font-size: 0.95rem; }
+.prose-contract ul { margin: 0.5rem 0 0.5rem 1.25rem; list-style: disc; }
+.prose-contract code { background: var(--color-bg-elev); padding: 0.05rem 0.3rem; border-radius: 0.25rem; font-size: 0.85em; }
+.prose-contract em { color: var(--color-muted); }
